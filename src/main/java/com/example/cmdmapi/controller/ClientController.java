@@ -26,6 +26,7 @@ public class ClientController {
 
     @ApiOperation(value = "Mostrar todos os usuários cadastrados")
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<ClientDTO> listItems() {
         return clientService.findAll();
     }
@@ -37,33 +38,25 @@ public class ClientController {
         return clientService.save(newClientDTO);
     }
 
-//    @ApiOperation(value = "Burscar usuário por id")
-//    @GetMapping(path = {"/{id}"})
-//    public ResponseEntity findById(@PathVariable long id){
-//        return clientRepository.findById(id)
-//                .map(record -> ResponseEntity.ok().body(record))
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-//
-//    @ApiOperation(value = "Altera usuário")
-//    @PutMapping(value="/{id}")
-//    public ResponseEntity update(@PathVariable("id") long id,
-//                                 @RequestBody Client client) {
-//        return clientRepository.findById(id)
-//                .map(record -> {
-//                    record.setFirstName(client.getFirstName());
-//                    Client updated = clientRepository.save(record);
-//                    return ResponseEntity.ok().body(updated);
-//                }).orElse(ResponseEntity.notFound().build());
-//    }
-//
-//    @ApiOperation(value = "Deletar usuário")
-//    @DeleteMapping(path ={"/{id}"})
-//    public ResponseEntity <?> delete(@PathVariable long id) {
-//        return clientRepository.findById(id)
-//                .map(record -> {
-//                    clientRepository.deleteById(id);
-//                    return ResponseEntity.ok().build();
-//                }).orElse(ResponseEntity.notFound().build());
-//    }
+    @ApiOperation(value = "Buscar usuário por id")
+    @GetMapping(path = {"/{id}"})
+    @ResponseStatus(HttpStatus.FOUND)
+    public ClientDTO findById(@PathVariable long id){
+        return clientService.findById(id);
+    }
+
+    @ApiOperation(value = "Altera usuário baseado no ID")
+    @PutMapping(value="/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientDTO update(@PathVariable("id") long id,
+                                 @RequestBody NewClientDTO newClientDTO) {
+        return clientService.update(id, newClientDTO);
+    }
+
+    @ApiOperation(value = "Deletar usuário")
+    @DeleteMapping(path ={"/{id}"})
+    @ResponseStatus(HttpStatus.OK)
+    public String delete(@PathVariable long id) {
+        return clientService.deleteById(id);
+    }
 }
