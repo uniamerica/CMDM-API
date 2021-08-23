@@ -15,8 +15,11 @@ import java.util.stream.DoubleStream;
 
 @Service
 public class ClientService {
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
+
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
 
     public List<ClientDTO> findAll() {
         return clientRepository.findAll().stream().map(ClientDTO::new).collect(Collectors.toList());
