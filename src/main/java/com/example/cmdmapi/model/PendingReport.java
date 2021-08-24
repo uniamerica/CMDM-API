@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Data
-public class Report{
+public class PendingReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +19,5 @@ public class Report{
 
     @Column(nullable = false)
     private String depoimento;
-
-    @Column(nullable = false)
-    private boolean pendente;
 
 }
