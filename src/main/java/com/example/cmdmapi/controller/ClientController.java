@@ -34,7 +34,7 @@ public class ClientController {
         return clientRepository.save(client);
     }
 
-    @ApiOperation(value = "Burscar usuário por id")
+    @ApiOperation(value = "Buscar usuário por id")
     @GetMapping(path = {"/{id}"})
     public ResponseEntity findById(@PathVariable long id){
         return clientRepository.findById(id)
