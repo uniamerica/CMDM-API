@@ -5,32 +5,84 @@ import com.example.cmdmapi.dto.input.NewClientDTO;
 import com.example.cmdmapi.model.Client;
 import com.example.cmdmapi.repository.ClientRepository;
 import com.google.common.base.CharMatcher;
+import lombok.var;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
 
     @Mock
     private ClientRepository clientRepository;
-
     private ClientService clientService;
 
     @BeforeEach
     void setUp() {
         clientService = new ClientService(clientRepository);
+    }
+
+    @Test
+    void shouldListAllItems() {
+        //when
+        clientService.findAll();
+        //then
+        verify(clientRepository).findAll();
+    }
+
+    @Test
+    void shouldAddClient() {
+
+        NewClientDTO newClientDTO = NewClientDTO.builder()
+                .firstName("teste")
+                .build();
+        Client client = Client.builder()
+                .firstName("teste")
+                .build();
+
+//        Mockito.when(clientRepository.save(client)).thenReturn(client);
+        Mockito.doReturn(client).when(clientRepository).save(any(Client.class));
+
+        var result = clientService.save(newClientDTO);
+
+        assertThat(result)
+                .isNotNull();
+        assertThat(result.getFirstName())
+                .isEqualTo(newClientDTO.getFirstName());
+    }
+
+    @Test
+    void shouldFindClientById() {
+      ClientDTO clientdto = ClientDTO.builder()
+              .id(1L)
+              .firstName("teste")
+              .build();
+      Client client = Client.builder()
+              .id(1L)
+              .firstName("teste")
+              .build();
+
+      Mockito.when(clientRepository.findById(clientdto.getId())).thenReturn(Optional.of(client));
+
+      var result = clientService.findById(client.getId());
+
+      assertThat(result).isEqualTo(clientdto);
     }
 
     @Test
@@ -47,11 +99,11 @@ class ClientServiceTest {
 
         var result = clientService.update(client.getId(), newClientDTO);
 
+        assertThat(result.getId())
+                .isEqualTo(client.getId());
         assertThat(result)
                 .isNotNull()
                 .isEqualTo(new ClientDTO(client));
-        assertThat(result.getId())
-                .isEqualTo(client.getId());
 
     }
 

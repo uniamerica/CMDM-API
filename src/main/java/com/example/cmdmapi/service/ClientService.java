@@ -25,13 +25,14 @@ public class ClientService {
         return clientRepository.findAll().stream().map(ClientDTO::new).collect(Collectors.toList());
     }
 
+    @Transactional
     public ClientDTO save(NewClientDTO newClientDTO) {
         return new ClientDTO(clientRepository.save(newClientDTO.toModel()));
     }
 
     public ClientDTO findById(long id) {
-        Client cliente = clientRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found Client by ID:" + id));
-        return new ClientDTO(cliente);
+        Client client = clientRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found Client by ID:" + id));
+        return new ClientDTO(client);
     }
 
     @Transactional
