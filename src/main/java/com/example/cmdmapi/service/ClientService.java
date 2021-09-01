@@ -25,7 +25,7 @@ public class ClientService {
         return clientRepository.findAll().stream().map(ClientDTO::new).collect(Collectors.toList());
     }
 
-
+    @Transactional
     public ClientDTO save(NewClientDTO newClientDTO) {
         return new ClientDTO(clientRepository.save(newClientDTO.toModel()));
     }
