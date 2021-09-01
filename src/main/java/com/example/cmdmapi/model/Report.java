@@ -22,7 +22,6 @@ public class Report{
     @Column(nullable = false)
     private String depoimento;
 
-
     public Report(Long codigo, String relato_relato_relato, String teste_teste_teste) {
     }
 

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
@@ -45,29 +46,25 @@ class ClientServiceTest {
         verify(clientRepository).findAll();
     }
 
-    // Test is no working
     @Test
-    @Disabled
     void shouldAddClient() {
 
-        // given
         NewClientDTO newClientDTO = NewClientDTO.builder()
                 .firstName("teste")
                 .build();
+        Client client = Client.builder()
+                .firstName("teste")
+                .build();
 
-        // when
-        clientService.save(newClientDTO);
+//        Mockito.when(clientRepository.save(client)).thenReturn(client);
+        Mockito.doReturn(client).when(clientRepository).save(any(Client.class));
 
-        // then
-        ArgumentCaptor<Client> clientArgumentCaptor =
-                ArgumentCaptor.forClass(Client.class);
+        var result = clientService.save(newClientDTO);
 
-        verify(clientRepository)
-                .save(clientArgumentCaptor.capture());
-
-        Client capturedClient = clientArgumentCaptor.getValue();
-
-        assertThat(capturedClient).isEqualTo(newClientDTO);
+        assertThat(result)
+                .isNotNull();
+        assertThat(result.getFirstName())
+                .isEqualTo(newClientDTO.getFirstName());
     }
 
     @Test

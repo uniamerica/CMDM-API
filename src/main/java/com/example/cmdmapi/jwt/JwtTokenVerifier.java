@@ -23,10 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.*;
-<<<<<<< HEAD
-
-=======
->>>>>>> 97e4c6df8592a77dc5971bb4627f0fe910f6a5e0
 
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
