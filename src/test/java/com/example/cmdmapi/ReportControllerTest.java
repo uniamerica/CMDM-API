@@ -62,7 +62,7 @@ public class ReportControllerTest{
     }
 
     /*
-    
+
     @Test
     public void deveRetornarSucesso_QuandoCadastarRelatos(){
         when(this.reportService.cadastrarRelatos(reports))

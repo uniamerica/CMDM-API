@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(CLIENT.name())
+                .antMatchers(HttpMethod.GET, "/relatos").permitAll()
                 .antMatchers(HttpMethod.GET, "/email-send").permitAll()
                 .anyRequest()
                 .authenticated();
@@ -68,13 +69,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-
-        return source;
-    }
 }

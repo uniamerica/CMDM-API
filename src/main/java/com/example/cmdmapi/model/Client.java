@@ -1,12 +1,18 @@
 package com.example.cmdmapi.model;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 //import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 public class Client {
 
     @Id
@@ -36,7 +42,17 @@ public class Client {
         this.firstName = firstName;
     }
 
-    public Client() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Client client = (Client) o;
 
+        return id != null && id.equals(client.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 1756406093;
     }
 }
