@@ -1,12 +1,10 @@
 package com.example.cmdmapi.model;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.*;
-
+import java.util.Date;
 
 @Entity
 @Data
-@AllArgsConstructor
 public class Report{
 
     @Id
@@ -21,13 +19,6 @@ public class Report{
 
     @Column(nullable = false)
     private String depoimento;
-
-    public Report(Long codigo, String relato_relato_relato, String teste_teste_teste) {
-    }
-
-    public Report() {
-
-    }
 
     @Column(nullable = false)
     private boolean pendente;

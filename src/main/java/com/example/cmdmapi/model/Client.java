@@ -13,7 +13,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Builder
-@Data
 public class Client {
 
     @Id
