@@ -4,7 +4,6 @@ import com.example.cmdmapi.dto.ClientDTO;
 import com.example.cmdmapi.dto.input.NewClientDTO;
 import com.example.cmdmapi.model.Client;
 import com.example.cmdmapi.repository.ClientRepository;
-import lombok.var;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
