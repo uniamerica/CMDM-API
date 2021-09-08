@@ -1,4 +1,4 @@
-package com.example.cmdmapi;
+package com.example.cmdmapi.service;
 
 
 public class ReportServiceTest {
