@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleService {
     private RoleRepository roleRepository;
 
-    public Role saveRole(Role role){
+    public Role save(Role role){
         return roleRepository.save(role);
     }
 }
