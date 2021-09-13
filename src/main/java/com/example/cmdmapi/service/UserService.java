@@ -1,5 +1,8 @@
 package com.example.cmdmapi.service;
 
+import com.example.cmdmapi.dto.UserDTO;
+import com.example.cmdmapi.dto.input.NewUserDTO;
+import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.model.Role;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
@@ -16,15 +19,47 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+
+    public UserDTO save(NewUserDTO newUserDTO) {
+        newUserDTO.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
+        return new UserDTO(userRepository.save(newUserDTO.toModel()));
+    }
+
+    public UserDTO findById(long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+        return new UserDTO(user);
+    }
+
+    public UserDTO update(long id, NewUserDTO newUserDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+
+        user.setName(newUserDTO.getName());
+        user.setAddress(newUserDTO.getAddress());
+        user.setUsername(newUserDTO.getUsername());
+        user.setPhone(newUserDTO.getPhone());
+        user.setEmail(newUserDTO.getEmail());
+        user.setBirth(newUserDTO.getBirth());
+        return new UserDTO(user);
+    }
+
+    public String deleteById(long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+        userRepository.deleteById(id);
+        return "Deletado com Sucesso";
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,22 +73,9 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 
-    public User saveUser(User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
     public void addRoleToUser(Long userId, String roleName){
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("jorge"));
         Role role = roleRepository.findByName(roleName);
         user.getRoles().add(role);
-    }
-
-    public User getUser(String username){
-        return userRepository.findByUsername(username);
-    }
-
-    public List<User> getUsers(){
-        return userRepository.findAll();
     }
 }
