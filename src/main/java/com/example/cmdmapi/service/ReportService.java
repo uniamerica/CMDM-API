@@ -1,10 +1,8 @@
 package com.example.cmdmapi.service;
 
 import com.example.cmdmapi.dto.ReportDTO;
-import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewReportDTO;
 import com.example.cmdmapi.model.Report;
-import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
