@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @Api(value = "Reports")
-@RequestMapping("/report")
+@RequestMapping("/reports")
 @RequiredArgsConstructor
 public class ReportController{
 
@@ -41,9 +41,9 @@ public class ReportController{
     }
 
     @ApiOperation(value = "Change Report by ID")
-    @PutMapping(value="/{id}")
+    @PutMapping(path = {"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public ReportDTO update(@PathVariable("id") long id, @RequestBody NewReportDTO newReportDTO) {
+    public ReportDTO update(@PathVariable long id, @RequestBody NewReportDTO newReportDTO) {
         return reportService.update(id, newReportDTO);
     }
 
