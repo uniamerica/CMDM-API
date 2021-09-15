@@ -9,18 +9,18 @@ public class Report{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idRelatos;
+    private Long idReport;
 
     @Column(nullable = false)
-    private String titulo;
+    private String title;
 
     @Column(nullable = false)
-    private String descricao;
+    private String description;
 
     @Column(nullable = false)
-    private String depoimento;
+    private String depoiment;
 
-    @Column(nullable = false)
-    private boolean pendente;
+//    @Column(nullable = false)
+//    private boolean pendente;
 
 }
