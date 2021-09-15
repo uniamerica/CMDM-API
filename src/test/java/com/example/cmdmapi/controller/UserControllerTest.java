@@ -118,4 +118,54 @@ class UserControllerTest {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    void deleteById() throws Exception {
+        UserDTO userDTO = UserDTO.builder()
+                .id(1L)
+                .name("teste")
+                .build();
+
+        when(userService.deleteById(1L)).thenReturn("Deletado com Sucesso");
+
+        String url = "/users/{id}";
+        mockMvc.perform(
+                delete(url, 1L)
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    void saveRole() throws Exception {
+        Role role = Role.builder()
+                .name("admin")
+                .build();
+
+        var json = new ObjectMapper().writeValueAsString(role);
+
+        when(roleService.save(role)).thenReturn(role);
+
+        String url = "/users/roles";
+        mockMvc.perform(
+                post(url)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isCreated());
+    }
+
+    @Test
+    void addRoleToUser() throws Exception {
+        Role role = Role.builder()
+                .name("admin")
+                .build();
+
+        var json = new ObjectMapper().writeValueAsString(role);
+
+        String url = "/users/{id}/role";
+        mockMvc.perform(
+                post(url, 1L)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isCreated());
+    }
 }

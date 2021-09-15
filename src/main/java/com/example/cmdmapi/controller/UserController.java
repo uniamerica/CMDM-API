@@ -59,7 +59,7 @@ public class UserController {
     @ApiOperation(value = "Deletar usuário")
     @DeleteMapping(path ={"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public String delete(@PathVariable long id) {
+    public String delete(@PathVariable("id") long id) {
         return userService.deleteById(id);
     }
 
