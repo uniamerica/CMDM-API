@@ -43,7 +43,7 @@ public class UserController {
 
     @ApiOperation(value = "Buscar usuário por id")
     @GetMapping(path = {"/{id}"})
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public UserDTO findById(@PathVariable long id){
         return userService.findById(id);
     }
@@ -59,7 +59,7 @@ public class UserController {
     @ApiOperation(value = "Deletar usuário")
     @DeleteMapping(path ={"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public String delete(@PathVariable long id) {
+    public String delete(@PathVariable("id") long id) {
         return userService.deleteById(id);
     }
 
@@ -69,7 +69,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(roleService.save(role));
     }
     @PostMapping("{id}/role")
-    public ResponseEntity<?> saveRole(@RequestBody Role role, @PathVariable long id) {
+    public ResponseEntity<?> addRoleToUser(@RequestBody Role role, @PathVariable long id) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/roles").toUriString());
         userService.addRoleToUser(id, role.getName());
         return ResponseEntity.created(uri).build();
