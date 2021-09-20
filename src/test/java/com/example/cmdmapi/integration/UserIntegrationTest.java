@@ -49,7 +49,7 @@ class UserIntegrationTest {
     private UserController userController;
 
     @Test
-    void listItems() throws Exception {
+    void shouldGetAllUsersAsList() throws Exception {
         String url = "/users";
         mockMvc.perform(
                 get(url)
@@ -58,7 +58,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void addItem() throws Exception {
+    void shouldAddUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
                 .build();
@@ -76,7 +76,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void update() throws Exception {
+    void shouldUpdateUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
                 .build();
@@ -94,7 +94,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void findById() throws Exception {
+    void shouldFindUserById() throws Exception {
         String url = "/users/{id}";
         mockMvc.perform(
                 get(url, 1L)
@@ -103,7 +103,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void deleteById() throws Exception {
+    void shouldDeleteById() throws Exception {
         String url = "/users/{id}";
         mockMvc.perform(
                 delete(url, 1L)
@@ -113,7 +113,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void saveRole() throws Exception {
+    void shouldAddRole() throws Exception {
         Role role = Role.builder()
                 .name("admin")
                 .build();
@@ -132,7 +132,7 @@ class UserIntegrationTest {
     }
 
     @Test
-    void addRoleToUser() throws Exception {
+    void shouldAddRoleToUser() throws Exception {
         Role role = Role.builder()
                 .name("admin")
                 .build();
