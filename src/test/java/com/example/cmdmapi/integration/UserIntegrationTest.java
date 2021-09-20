@@ -62,9 +62,6 @@ class UserIntegrationTest {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
                 .build();
-        UserDTO userDTO = UserDTO.builder()
-                .name("teste2")
-                .build();
 
         var json = new ObjectMapper().writeValueAsString(newUserDTO);
 
@@ -83,10 +80,6 @@ class UserIntegrationTest {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
                 .build();
-        UserDTO userDTO = UserDTO.builder()
-                .id(1L)
-                .name("teste")
-                .build();
 
         var json = new ObjectMapper().writeValueAsString(newUserDTO);
 
@@ -102,11 +95,6 @@ class UserIntegrationTest {
 
     @Test
     void findById() throws Exception {
-        UserDTO userDTO = UserDTO.builder()
-                .id(1L)
-                .name("teste")
-                .build();
-
         String url = "/users/{id}";
         mockMvc.perform(
                 get(url, 1L)
@@ -116,11 +104,6 @@ class UserIntegrationTest {
 
     @Test
     void deleteById() throws Exception {
-        UserDTO userDTO = UserDTO.builder()
-                .id(1L)
-                .name("teste")
-                .build();
-
         String url = "/users/{id}";
         mockMvc.perform(
                 delete(url, 1L)
