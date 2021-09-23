@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class ReportService{
     private final ReportRepository reportRepository;
 
+
     public List<ReportDTO> findAll() {
         return reportRepository.findAll().stream().map(ReportDTO::new).collect(Collectors.toList());
     }

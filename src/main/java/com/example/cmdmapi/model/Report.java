@@ -1,26 +1,25 @@
 package com.example.cmdmapi.model;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Report{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idReport;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
     private String depoiment;
 
-//    @Column(nullable = false)
-//    private boolean pendente;
 
 }
