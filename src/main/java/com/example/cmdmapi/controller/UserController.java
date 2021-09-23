@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -30,14 +31,14 @@ public class UserController {
     @ApiOperation(value = "Mostrar todos os usuários cadastrados")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> listItems() {
+    public List<UserDTO> listAll() {
         return userService.findAll();
     }
 
     @ApiOperation(value = "Cadastrar um novo usuário")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO addItem (@RequestBody NewUserDTO newUserDTO) {
+    public UserDTO create (@Valid @RequestBody NewUserDTO newUserDTO) {
         return userService.save(newUserDTO);
     }
 
@@ -52,7 +53,7 @@ public class UserController {
     @PutMapping(value="/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@PathVariable("id") long id,
-                          @RequestBody NewUserDTO newUserDTO) {
+                          @Valid @RequestBody NewUserDTO newUserDTO) {
         return userService.update(id, newUserDTO);
     }
 
