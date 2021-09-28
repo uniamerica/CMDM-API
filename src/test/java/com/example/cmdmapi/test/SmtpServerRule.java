@@ -19,7 +19,6 @@ public class SmtpServerRule extends ExternalResource{
         smtpServer.start();
     }
 
-
     public MimeMessage[] getMessages() {
         return smtpServer.getReceivedMessages();
     }

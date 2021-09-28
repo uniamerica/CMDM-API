@@ -1,5 +1,4 @@
 package com.example.cmdmapi.test;
-
 import com.example.cmdmapi.model.Mail;
 import com.example.cmdmapi.service.EmailService;
 import org.junit.Rule;

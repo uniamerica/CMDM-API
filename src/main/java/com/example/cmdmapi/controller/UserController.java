@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -30,20 +31,20 @@ public class UserController {
     @ApiOperation(value = "Mostrar todos os usuários cadastrados")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> listItems() {
+    public List<UserDTO> listAll() {
         return userService.findAll();
     }
 
     @ApiOperation(value = "Cadastrar um novo usuário")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO addItem (@RequestBody NewUserDTO newUserDTO) {
+    public UserDTO create (@Valid @RequestBody NewUserDTO newUserDTO) {
         return userService.save(newUserDTO);
     }
 
     @ApiOperation(value = "Buscar usuário por id")
     @GetMapping(path = {"/{id}"})
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public UserDTO findById(@PathVariable long id){
         return userService.findById(id);
     }
@@ -52,14 +53,14 @@ public class UserController {
     @PutMapping(value="/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@PathVariable("id") long id,
-                          @RequestBody NewUserDTO newUserDTO) {
+                          @Valid @RequestBody NewUserDTO newUserDTO) {
         return userService.update(id, newUserDTO);
     }
 
     @ApiOperation(value = "Deletar usuário")
     @DeleteMapping(path ={"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public String delete(@PathVariable long id) {
+    public String delete(@PathVariable("id") long id) {
         return userService.deleteById(id);
     }
 
@@ -69,7 +70,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(roleService.save(role));
     }
     @PostMapping("{id}/role")
-    public ResponseEntity<?> saveRole(@RequestBody Role role, @PathVariable long id) {
+    public ResponseEntity<?> addRoleToUser(@RequestBody Role role, @PathVariable long id) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/roles").toUriString());
         userService.addRoleToUser(id, role.getName());
         return ResponseEntity.created(uri).build();

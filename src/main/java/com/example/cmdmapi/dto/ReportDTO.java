@@ -1,6 +1,7 @@
 package com.example.cmdmapi.dto;
 
 import com.example.cmdmapi.model.Report;
+import com.example.cmdmapi.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +18,13 @@ public class ReportDTO implements Serializable {
     private String title;
     private String description;
     private String depoiment;
+    private User user;
 
     public ReportDTO(Report report) {
         id = report.getIdReport();
         title = report.getTitle();
         description = report.getDescription();
         depoiment = report.getDepoiment();
+        user = report.getUser();
     }
 }
