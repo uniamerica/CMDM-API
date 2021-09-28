@@ -1,5 +1,6 @@
 package com.example.cmdmapi.service;
-import com.example.cmdmapi.model.Email;
+import com.example.cmdmapi.model.Mail;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,7 +12,8 @@ public class EmailService {
     @Autowired
     private JavaMailSender emailSender;
 
-    public void sendSimpleMessage(Email mail){
+    public void sendSimpleMessage(Mail mail){
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(mail.getSubject());
         message.setText(mail.getContent());
@@ -20,5 +22,5 @@ public class EmailService {
 
         emailSender.send(message);
     }
-
 }
+

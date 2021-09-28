@@ -1,6 +1,6 @@
 package com.example.cmdmapi.test;
+import com.example.cmdmapi.model.Mail;
 import com.example.cmdmapi.service.EmailService;
-import com.example.cmdmapi.model.Email;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 public class SpringMailIntegrationTest {
+
     @Autowired
     private EmailService emailService;
 
@@ -28,11 +29,11 @@ public class SpringMailIntegrationTest {
 
     @Test
     public void shouldSendSingleMail() throws MessagingException, IOException {
-        Email mail = new Email();
+        Mail mail = new Mail();
         mail.setFrom("eric@copyvic.com.br");
         mail.setTo("eric@copyvic.com.br");
-        mail.setSubject("Teste de envio de email");
-        mail.setContent("Este é o teste de envio de email se deus quiser funciona mas vai sim");
+        mail.setSubject("Spring Mail Integration Testando com JUnit e Greenmail");
+        mail.setContent("Testando spring mail");
 
         emailService.sendSimpleMessage(mail);
 
