@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class ReportController{
     @ApiOperation(value = "Create new Report")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ReportDTO addItem(@RequestBody NewReportDTO newReportDTO) {
+    public ReportDTO addItem(@Valid @RequestBody NewReportDTO newReportDTO) {
         return reportService.save(newReportDTO);
     }
 
@@ -43,7 +44,7 @@ public class ReportController{
     @ApiOperation(value = "Change Report by ID")
     @PutMapping(path = {"/{id}"})
     @ResponseStatus(HttpStatus.OK)
-    public ReportDTO update(@PathVariable long id, @RequestBody NewReportDTO newReportDTO) {
+    public ReportDTO update(@PathVariable long id, @Valid @RequestBody NewReportDTO newReportDTO) {
         return reportService.update(id, newReportDTO);
     }
 

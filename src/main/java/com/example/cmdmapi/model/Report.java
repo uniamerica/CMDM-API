@@ -20,5 +20,6 @@ public class Report{
 
 //    @Column(nullable = false)
 //    private boolean pendente;
-
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private User user;
 }

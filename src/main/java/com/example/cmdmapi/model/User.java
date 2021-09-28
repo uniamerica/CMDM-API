@@ -1,14 +1,14 @@
 package com.example.cmdmapi.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,6 +19,7 @@ public class User {
     private Long id;
     private String name;
     private String username;
+    @JsonIgnore
     private String password;
     private LocalDate birth;
     private String phone;
@@ -28,4 +29,13 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany
+    @ToString.Exclude
+    @JoinColumn(name = "user_id")
+    private List<Report> reports = new ArrayList<>();
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
