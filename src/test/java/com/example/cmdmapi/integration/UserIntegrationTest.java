@@ -4,16 +4,18 @@ import com.example.cmdmapi.controller.UserController;
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.model.Role;
+import com.example.cmdmapi.repository.RoleRepository;
+import com.example.cmdmapi.repository.UserRepository;
 import com.example.cmdmapi.service.RoleService;
 import com.example.cmdmapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,35 +38,32 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
-@ContextConfiguration
+@SpringBootTest
+@AutoConfigureMockMvc
 @WithMockUser
-@AutoConfigureTestDatabase
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
-    @MockBean
-    private RoleService roleService;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    private UserController userController;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Test
+    @Order(1)
     void shouldGetAllUsersAsList() throws Exception {
         String url = "/users";
         mockMvc.perform(
                 get(url)
         ).andExpect(status().isOk());
-        verify(userService).findAll();
     }
 
     @Test
+    @Order(2)
     void shouldAddUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -81,10 +81,10 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated());
-        verify(userService).save(newUserDTO);
     }
 
     @Test
+    @Order(3)
     void shouldAddUserReturnValidationExceptionIfNotValid() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -99,10 +99,10 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
-        verify(userService, never()).save(newUserDTO);
     }
 
     @Test
+    @Order(4)
     void shouldUpdateUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -110,6 +110,8 @@ class UserIntegrationTest {
                 .password("joj")
                 .username("joj")
                 .build();
+
+        shouldAddUser();
 
         var json = new ObjectMapper().writeValueAsString(newUserDTO);
 
@@ -120,10 +122,10 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
-        verify(userService).update(1L, newUserDTO);
     }
 
     @Test
+    @Order(4)
     void shouldUpdateUserReturnsExceptionIfNotValid() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -138,11 +140,10 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
-        verify(userService, never()).update(1L, newUserDTO);
     }
 
-    @Ignore("Teste nao funciona com MOCK")
     @Test
+    @Order(5)
     void shouldUpdateUserReturnsExceptionIfNotFound() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -160,30 +161,23 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
-        verify(userService, never()).update(5000L, newUserDTO);
     }
 
 
     @Test
+    @Order(6)
     void shouldFindUserById() throws Exception {
         String url = "/users/{id}";
+
+        shouldAddUser();
+
         mockMvc.perform(
                 get(url, 1L)
         ).andExpect(status().isOk());
-        verify(userService).findById(1L);
     }
 
     @Test
-    void shouldDeleteById() throws Exception {
-        String url = "/users/{id}";
-        mockMvc.perform(
-                delete(url, 1L)
-        ).andExpect(status().isOk());
-
-        verify(userService).deleteById(1L);
-    }
-
-    @Test
+    @Order(7)
     void shouldAddRole() throws Exception {
         Role role = Role.builder()
                 .name("admin")
@@ -198,15 +192,18 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated());
-
-        verify(roleService).save(role);
     }
 
     @Test
+    @Order(8)
     void shouldAddRoleToUser() throws Exception {
         Role role = Role.builder()
                 .name("admin")
                 .build();
+
+        shouldAddUser();
+        shouldAddRole();
+
 
         var json = new ObjectMapper().writeValueAsString(role);
 
@@ -217,7 +214,17 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated());
+    }
 
-        verify(userService).addRoleToUser(1L, role.getName());
+    @Test
+    @Order(9)
+    void shouldDeleteById() throws Exception {
+        String url = "/users/{id}";
+
+        shouldAddUser();
+
+        mockMvc.perform(
+                delete(url, 1L)
+        ).andExpect(status().isOk());
     }
 }
