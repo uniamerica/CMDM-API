@@ -3,7 +3,9 @@ package com.example.cmdmapi.service;
 import com.example.cmdmapi.dto.ReportDTO;
 import com.example.cmdmapi.dto.input.NewReportDTO;
 import com.example.cmdmapi.model.Report;
+import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.ReportRepository;
+import com.example.cmdmapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ReportService{
     private final ReportRepository reportRepository;
+    private final UserRepository userRepository;
 
     public List<ReportDTO> findAll() {
         return reportRepository.findAll().stream().map(ReportDTO::new).collect(Collectors.toList());
@@ -27,6 +30,7 @@ public class ReportService{
     }
 
     public ReportDTO save(NewReportDTO newReportDTO) {
+        userRepository.findById(newReportDTO.getUserId()).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + newReportDTO.getUserId()));
         return new ReportDTO(reportRepository.save(newReportDTO.toModel()));
     }
 
@@ -36,6 +40,8 @@ public class ReportService{
         report.setTitle(newReportDTO.getTitle());
         report.setDescription(newReportDTO.getDescription());
         report.setDepoiment(newReportDTO.getDepoiment());
+        User user = userRepository.findById(newReportDTO.getUserId()).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + newReportDTO.getUserId()));
+        report.setUser(user);
 
         Report updated = reportRepository.save(report);
         return new ReportDTO(updated);
