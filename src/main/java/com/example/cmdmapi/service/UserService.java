@@ -2,6 +2,7 @@ package com.example.cmdmapi.service;
 
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
+import com.example.cmdmapi.exceptions.NotFoundException;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.model.Role;
 import com.example.cmdmapi.model.User;
@@ -39,12 +40,12 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO findById(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
         return new UserDTO(user);
     }
 
     public UserDTO update(long id, NewUserDTO newUserDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
 
         user.setName(newUserDTO.getName());
         user.setAddress(newUserDTO.getAddress());
@@ -56,7 +57,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String deleteById(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
         userRepository.deleteById(id);
         return "Deletado com Sucesso";
     }
@@ -74,8 +75,11 @@ public class UserService implements UserDetailsService {
     }
 
     public void addRoleToUser(Long userId, String roleName){
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("jorge"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found Role by Name:" + roleName));
         Role role = roleRepository.findByName(roleName);
-        user.getRoles().add(role);
+
+        if(!user.getRoles().contains(role)){
+            user.getRoles().add(role);
+        }
     }
 }

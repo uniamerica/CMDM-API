@@ -8,14 +8,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @ControllerAdvice
-public class ExceptionHandler extends ResponseEntityExceptionHandler {
+public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @NotNull
     @Override
@@ -35,6 +35,17 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         }
         body.setFields(fields);
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Response> handleNotFoundException(NotFoundException ex, WebRequest request){
+        var statusHttp = HttpStatus.NOT_FOUND;
+        var timestamp = LocalDateTime.now();
+        var title = ex.getMessage();
+        var path = request.getDescription(false).substring(5);
+        var body = new Response(statusHttp.value(), timestamp, title, path);
+
+        return ResponseEntity.status(statusHttp).body(body);
     }
 
 }
