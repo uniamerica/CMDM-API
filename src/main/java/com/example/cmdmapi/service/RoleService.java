@@ -14,9 +14,6 @@ public class RoleService {
     private final RoleRepository roleRepository;
 
     public Role save(Role role){
-        if(!roleRepository.exists(Example.of(role))){
-            return roleRepository.save(role);
-        }
-        return roleRepository.findByName(role.getName());
+        return roleRepository.save(role);
     }
 }

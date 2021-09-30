@@ -4,6 +4,7 @@ import com.example.cmdmapi.controller.UserController;
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.model.Role;
+import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
 import com.example.cmdmapi.repository.UserRepository;
 import com.example.cmdmapi.service.RoleService;
@@ -29,6 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -54,7 +56,6 @@ class UserIntegrationTest {
     private RoleRepository roleRepository;
 
     @Test
-    @Order(1)
     void shouldGetAllUsersAsList() throws Exception {
         String url = "/users";
         mockMvc.perform(
@@ -63,28 +64,11 @@ class UserIntegrationTest {
     }
 
     @Test
-    @Order(2)
     void shouldAddUser() throws Exception {
-        NewUserDTO newUserDTO = NewUserDTO.builder()
-                .name("teste2")
-                .email("joj")
-                .password("joj")
-                .username("joj")
-                .build();
-
-        var json = new ObjectMapper().writeValueAsString(newUserDTO);
-
-        String url = "/users";
-        mockMvc.perform(
-                post(url)
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isCreated());
+        AddUser();
     }
 
     @Test
-    @Order(3)
     void shouldAddUserReturnValidationExceptionIfNotValid() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -102,7 +86,6 @@ class UserIntegrationTest {
     }
 
     @Test
-    @Order(4)
     void shouldUpdateUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -111,13 +94,13 @@ class UserIntegrationTest {
                 .username("joj")
                 .build();
 
-        shouldAddUser();
+        var user = getUser();
 
         var json = new ObjectMapper().writeValueAsString(newUserDTO);
 
         String url = "/users/{id}";
         mockMvc.perform(
-                put(url, 1L)
+                put(url, user.getId())
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -125,7 +108,6 @@ class UserIntegrationTest {
     }
 
     @Test
-    @Order(4)
     void shouldUpdateUserReturnsExceptionIfNotValid() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -143,7 +125,6 @@ class UserIntegrationTest {
     }
 
     @Test
-    @Order(5)
     void shouldUpdateUserReturnsExceptionIfNotFound() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -165,20 +146,74 @@ class UserIntegrationTest {
 
 
     @Test
-    @Order(6)
     void shouldFindUserById() throws Exception {
         String url = "/users/{id}";
 
-        shouldAddUser();
+        var user = getUser();
 
         mockMvc.perform(
-                get(url, 1L)
+                get(url, user.getId())
         ).andExpect(status().isOk());
     }
 
     @Test
-    @Order(7)
     void shouldAddRole() throws Exception {
+        AddRole();
+    }
+
+    @Test
+    void shouldAddRoleToUser() throws Exception {
+        var user = getUser();
+        var role = getRole();
+
+        var json = new ObjectMapper().writeValueAsString(role);
+
+        String url = "/users/{id}/role";
+        mockMvc.perform(
+                post(url, user.getId())
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isCreated());
+    }
+
+    @Test
+    void shouldDeleteById() throws Exception {
+        String url = "/users/{id}";
+
+        var user = getUser();
+
+        mockMvc.perform(
+                delete(url, user.getId())
+        ).andExpect(status().isOk());
+    }
+
+    private MvcResult AddUser() throws Exception {
+        NewUserDTO newUserDTO = NewUserDTO.builder()
+                .name("teste2")
+                .email("joj")
+                .password("joj")
+                .username("joj")
+                .build();
+
+        var json = new ObjectMapper().writeValueAsString(newUserDTO);
+
+        String url = "/users";
+        return mockMvc.perform(
+                post(url)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isCreated())
+        .andReturn();
+    }
+
+    private User getUser() throws Exception {
+        var mvcResult = AddUser();
+        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), User.class);
+    }
+
+    private MvcResult AddRole() throws Exception {
         Role role = Role.builder()
                 .name("admin")
                 .build();
@@ -186,45 +221,23 @@ class UserIntegrationTest {
         var json = new ObjectMapper().writeValueAsString(role);
 
         String url = "/users/roles";
-        mockMvc.perform(
+        return mockMvc.perform(
                 post(url)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isCreated());
+        ).andExpect(status().isCreated())
+                .andReturn();
     }
 
-    @Test
-    @Order(8)
-    void shouldAddRoleToUser() throws Exception {
-        Role role = Role.builder()
-                .name("admin")
-                .build();
-
-        shouldAddUser();
-        shouldAddRole();
-
-
-        var json = new ObjectMapper().writeValueAsString(role);
-
-        String url = "/users/{id}/role";
-        mockMvc.perform(
-                post(url, 1L)
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isCreated());
+    private Role getRole() throws Exception {
+        var mvcResult = AddRole();
+        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Role.class);
     }
 
-    @Test
-    @Order(9)
-    void shouldDeleteById() throws Exception {
-        String url = "/users/{id}";
-
-        shouldAddUser();
-
-        mockMvc.perform(
-                delete(url, 1L)
-        ).andExpect(status().isOk());
+    @AfterEach
+    private void afterAll() {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 }

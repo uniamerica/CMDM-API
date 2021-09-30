@@ -18,6 +18,7 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    @Column(unique=true)
     private String username;
     @JsonIgnore
     private String password;
