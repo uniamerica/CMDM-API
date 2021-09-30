@@ -48,57 +48,57 @@ public class ReportServiceTest {
     @Test
     void ShouldFindReportById(){
         ReportDTO reportDTO = ReportDTO.builder().id(1L).depoiment("depoimento").build();
-        Report report = Report.builder().idReport(1L).depoiment("depoimento").build();
+        Report report = Report.builder().id(1L).depoiment("depoimento").build();
 
         Mockito.when(reportRepository.findById(reportDTO.getId())).thenReturn(Optional.of(report));
 
-        var result=reportService.findById(report.getIdReport());
+        var result=reportService.findById(report.getId());
         assertThat(result).isEqualTo(reportDTO);
 
     }
     @Test
     void ShouldUpdateReport(){
         NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento2").build();
-        Report report = Report.builder().idReport(1L).depoiment("depoimento").build();
+        Report report = Report.builder().id(1L).depoiment("depoimento").build();
 
-        Mockito.when(reportRepository.findById(report.getIdReport())).thenReturn(Optional.of(report));
+        Mockito.when(reportRepository.findById(report.getId())).thenReturn(Optional.of(report));
 
-        var result = reportService.update(report.getIdReport(), newReportDTO);
+        var result = reportService.update(report.getId(), newReportDTO);
 
         assertThat(result).isNotNull().isEqualTo(new ReportDTO(report));
-        assertThat(result.getId()).isEqualTo(report.getIdReport());
+        assertThat(result.getId()).isEqualTo(report.getId());
     }
     @Test
     void shouldUpdateReportReturnsExceptionIfNotFound(){
-        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("errado").build();
-        Report report = Report.builder().idReport(1L).depoiment("depoiment").build();
+        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento2").build();
+        Report report = Report.builder().id(1L).depoiment("depoimento").build();
 
         Mockito.when(reportRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> reportService.update(report.getIdReport(), newReportDTO)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> reportService.update(report.getId(), newReportDTO)).isInstanceOf(IllegalStateException.class);
     }
     @Test
     void shouldDeleteById() {
         Report report = Report.builder()
-                .idReport(1L)
+                .id(1L)
                 .depoiment("teste")
                 .build();
 
-        Mockito.when(reportRepository.findById(report.getIdReport())).thenReturn(Optional.of(report));
+        Mockito.when(reportRepository.findById(report.getId())).thenReturn(Optional.of(report));
 
-        var result = reportService.deleteById(report.getIdReport());
+        var result = reportService.deleteById(report.getId());
 
         assertThat(result).isEqualTo("Report was successfully deleted");
     }
     @Test
     void shouldDeleteByIdReturnsThrowsException() {
         Report report = Report.builder()
-                .idReport(1L)
+                .id(1L)
                 .depoiment("teste")
                 .build();
 
         Mockito.when(reportRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> reportService.deleteById(report.getIdReport())).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> reportService.deleteById(report.getId())).isInstanceOf(IllegalStateException.class);
     }
 }
 

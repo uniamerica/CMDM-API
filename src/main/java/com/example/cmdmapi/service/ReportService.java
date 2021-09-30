@@ -3,11 +3,17 @@ package com.example.cmdmapi.service;
 import com.example.cmdmapi.dto.ReportDTO;
 import com.example.cmdmapi.dto.input.NewReportDTO;
 import com.example.cmdmapi.model.Report;
+import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

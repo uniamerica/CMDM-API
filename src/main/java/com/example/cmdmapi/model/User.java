@@ -1,5 +1,6 @@
 package com.example.cmdmapi.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,10 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 public class User {
+    @ApiModelProperty(value = "Código do usuario")
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @ApiModelProperty(value = "Nome do usuario")
     private String name;
     private String username;
     private String password;

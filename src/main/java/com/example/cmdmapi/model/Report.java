@@ -16,7 +16,7 @@ public class Report{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idReport;
+    private Long id;
     private String title;
     private String description;
     private String depoiment;
