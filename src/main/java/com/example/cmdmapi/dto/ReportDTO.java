@@ -21,7 +21,7 @@ public class ReportDTO implements Serializable {
     private User user;
 
     public ReportDTO(Report report) {
-        id = report.getIdReport();
+        id = report.getId();
         title = report.getTitle();
         description = report.getDescription();
         depoiment = report.getDepoiment();

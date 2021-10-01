@@ -1,5 +1,6 @@
 package com.example.cmdmapi.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -15,8 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class User {
+    @ApiModelProperty(value = "Código do usuario")
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @ApiModelProperty(value = "Nome do usuario")
     private String name;
     private String username;
     @JsonIgnore
