@@ -7,6 +7,8 @@ import com.example.cmdmapi.service.RoleService;
 import com.example.cmdmapi.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,15 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-
+@ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Mostrar todos os usuários cadastrados"),
+        @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+        @ApiResponse(code = 500, message = "Foi gerada uma exceção"),
+})
 @RestController
 @Api(value = "Users")
 @RequestMapping("/users")
+
 @RequiredArgsConstructor
 public class UserController {
 
