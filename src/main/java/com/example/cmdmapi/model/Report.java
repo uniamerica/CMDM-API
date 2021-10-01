@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,5 +19,10 @@ public class Report{
     private String description;
     private String depoiment;
 
+//    @Column(nullable = false)
+//    private boolean pendente;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private User user;
 
 }

@@ -7,6 +7,7 @@ import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.model.Report;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.ReportRepository;
+import com.example.cmdmapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,22 +26,29 @@ import static org.mockito.ArgumentMatchers.any;
 public class ReportServiceTest {
     @Mock
     private ReportRepository reportRepository;
+    @Mock
+    private UserRepository userRepository;
 
-    @Mock ReportService reportService;
+    ReportService reportService;
 
     @BeforeEach
     void setUp(){
-        reportService = new ReportService(reportRepository);
+        reportService = new ReportService(reportRepository, userRepository);
     }
 
     @Test
     void ShouldAddReport(){
-        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento").build();
-        Report report = Report.builder().depoiment("depoimento").build();
+        NewReportDTO newReportDTO = NewReportDTO.builder()
+                .depoiment("depoimento")
+                .build();
+        Report report = Report.builder()
+                .depoiment("depoimento")
+                .build();
 
         Mockito.doReturn(report).when(reportRepository).save(any(Report.class));
 
         var result = reportService.save(newReportDTO);
+
         assertThat(result).isNotNull();
         assertThat(result.getDepoiment()).isEqualTo(newReportDTO.getDepoiment());
 
