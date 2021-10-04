@@ -44,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserIntegrationTest {
 
     @Autowired
@@ -235,8 +234,8 @@ class UserIntegrationTest {
         return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsByteArray(), Role.class);
     }
 
-    @AfterEach
-    private void afterAll() {
+    @BeforeEach
+    private void beforeAll() {
         userRepository.deleteAll();
         roleRepository.deleteAll();
     }
