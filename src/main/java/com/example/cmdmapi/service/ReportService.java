@@ -44,8 +44,8 @@ public class ReportService{
         report.setDescription(newReportDTO.getDescription());
         report.setDepoiment(newReportDTO.getDepoiment());
 
-        Report updated = reportRepository.save(report);
-        return new ReportDTO(updated);
+        //Report updated = reportRepository.save(report);
+        return new ReportDTO(report);
     }
 
     public String deleteById(long id) {

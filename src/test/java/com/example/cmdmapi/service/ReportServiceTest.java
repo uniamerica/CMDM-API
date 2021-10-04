@@ -61,12 +61,12 @@ public class ReportServiceTest {
         NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento2").build();
         Report report = Report.builder().id(1L).depoiment("depoimento").build();
 
-        Mockito.when(reportRepository.findById(report.getId())).thenReturn(Optional.of(report));
+        Mockito.when(reportRepository.findById(1L)).thenReturn(Optional.of(report));
 
-        var result = reportService.update(report.getId(), newReportDTO);
+        var result = reportService.update(1L, newReportDTO);
 
         assertThat(result).isNotNull().isEqualTo(new ReportDTO(report));
-        assertThat(result.getId()).isEqualTo(report.getId());
+        assertThat(result.getId()).isEqualTo(1L);
     }
     @Test
     void shouldUpdateReportReturnsExceptionIfNotFound(){
