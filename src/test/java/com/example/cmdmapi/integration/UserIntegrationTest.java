@@ -33,8 +33,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -85,6 +88,27 @@ class UserIntegrationTest {
     }
 
     @Test
+    void shouldAddUserReturnExceptionIfUserNotUnique() throws Exception {
+        User user = getUser();
+        NewUserDTO newUserDTO = NewUserDTO.builder()
+                .name("teste2")
+                .email("joj")
+                .password("joj")
+                .username(user.getUsername())
+                .build();
+
+        var json = new ObjectMapper().writeValueAsString(newUserDTO);
+
+        String url = "/users";
+        mockMvc.perform(
+                post(url)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldUpdateUser() throws Exception {
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
@@ -104,6 +128,30 @@ class UserIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldUpdateUserReturnExceptionIfNotUniqueAndNotSameId() throws Exception {
+
+        var user1 = getUser();
+        var user2 = getUser();
+
+        NewUserDTO newUserDTO = NewUserDTO.builder()
+                .name("teste2")
+                .email("joj")
+                .password("joj")
+                .username(user1.getUsername())
+                .build();
+
+        var json = new ObjectMapper().writeValueAsString(newUserDTO);
+
+        String url = "/users/{id}";
+        mockMvc.perform(
+                put(url, user2.getId())
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -188,12 +236,17 @@ class UserIntegrationTest {
     }
 
     private MvcResult AddUser() throws Exception {
+        byte[] array = new byte[7]; // length is bounded by 7
+        new Random().nextBytes(array);
+        String generatedString = new String(array, StandardCharsets.UTF_8);
+
         NewUserDTO newUserDTO = NewUserDTO.builder()
                 .name("teste2")
                 .email("joj")
                 .password("joj")
-                .username("joj")
+                .username(generatedString)
                 .build();
+
 
         var json = new ObjectMapper().writeValueAsString(newUserDTO);
 

@@ -48,4 +48,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(statusHttp).body(body);
     }
 
+    @ExceptionHandler(UniqueException.class)
+    public ResponseEntity<Response> handleUniqueUserException(UniqueException ex, WebRequest request){
+        var statusHttp = HttpStatus.BAD_REQUEST;
+        var timestamp = LocalDateTime.now();
+        var title = ex.getMessage();
+        var path = request.getDescription(false).substring(5);
+        var body = new Response(statusHttp.value(), timestamp, title, path);
+
+        return ResponseEntity.status(statusHttp).body(body);
+    }
+
 }

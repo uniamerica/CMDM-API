@@ -3,9 +3,9 @@ package com.example.cmdmapi.service;
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.exceptions.NotFoundException;
+import com.example.cmdmapi.exceptions.UniqueException;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.model.Role;
-import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
 import com.example.cmdmapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
 
     public UserDTO update(long id, NewUserDTO newUserDTO) {
         User user = findUserByIdOrReturnException(id);
-        ifUsernameExistsReturnException(newUserDTO.getUsername());
+        ifUsernameExistsReturnException(newUserDTO.getUsername(), id);
         user.setName(newUserDTO.getName());
         user.setAddress(newUserDTO.getAddress());
         user.setUsername(newUserDTO.getUsername());
@@ -84,10 +84,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + userId));
     }
 
+    public void ifUsernameExistsReturnException(String username, Long id){
+        var user = userRepository.findByUsername(username);
+        if(user.isPresent() && !user.get().getId().equals(id)){
+            throw new UniqueException("Usuario já Existente");
+        }
+    }
+
     public void ifUsernameExistsReturnException(String username){
-        var teste = userRepository.findByUsername(username);
-        if(teste.isPresent()){
-            throw new IllegalStateException("Usuario já Existente");
+        var user = userRepository.findByUsername(username);
+        if(user.isPresent()){
+            throw new UniqueException("Usuario já Existente");
         }
     }
 }
