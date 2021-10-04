@@ -3,9 +3,9 @@ package com.example.cmdmapi.service;
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.exceptions.NotFoundException;
+import com.example.cmdmapi.exceptions.UniqueException;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.model.Role;
-import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
 import com.example.cmdmapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,18 +35,19 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO save(NewUserDTO newUserDTO) {
+        ifUsernameExistsReturnException(newUserDTO.getUsername());
         newUserDTO.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
         return new UserDTO(userRepository.save(newUserDTO.toModel()));
     }
 
     public UserDTO findById(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
+        User user = findUserByIdOrReturnException(id);
         return new UserDTO(user);
     }
 
     public UserDTO update(long id, NewUserDTO newUserDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
-
+        User user = findUserByIdOrReturnException(id);
+        ifUsernameExistsReturnException(newUserDTO.getUsername(), id);
         user.setName(newUserDTO.getName());
         user.setAddress(newUserDTO.getAddress());
         user.setUsername(newUserDTO.getUsername());
@@ -57,17 +58,13 @@ public class UserService implements UserDetailsService {
     }
 
     public String deleteById(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + id));
         userRepository.deleteById(id);
         return "Deletado com Sucesso";
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if(user == null){
-            throw new UsernameNotFoundException("user not found ");
-        }
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user not found "));
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
@@ -75,11 +72,29 @@ public class UserService implements UserDetailsService {
     }
 
     public void addRoleToUser(Long userId, String roleName){
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found Role by Name:" + roleName));
+        User user = findUserByIdOrReturnException(userId);
         Role role = roleRepository.findByName(roleName);
 
         if(!user.getRoles().contains(role)){
             user.getRoles().add(role);
+        }
+    }
+
+    public User findUserByIdOrReturnException(Long userId){
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not Found User by ID:" + userId));
+    }
+
+    public void ifUsernameExistsReturnException(String username, Long id){
+        var user = userRepository.findByUsername(username);
+        if(user.isPresent() && !user.get().getId().equals(id)){
+            throw new UniqueException("Usuario já Existente");
+        }
+    }
+
+    public void ifUsernameExistsReturnException(String username){
+        var user = userRepository.findByUsername(username);
+        if(user.isPresent()){
+            throw new UniqueException("Usuario já Existente");
         }
     }
 }
