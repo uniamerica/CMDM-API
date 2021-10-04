@@ -1,104 +1,77 @@
 package com.example.cmdmapi.service;
 
+import com.example.cmdmapi.TesteBase;
 import com.example.cmdmapi.dto.ReportDTO;
-import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewReportDTO;
-import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.model.Report;
-import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.ReportRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.IOException;
 import java.util.Optional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@ExtendWith(MockitoExtension.class)
-public class ReportServiceTest {
-    @Mock
+public class ReportServiceTest extends TesteBase {
+
+    @Autowired
     private ReportRepository reportRepository;
 
-    @Mock ReportService reportService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp(){
-        reportService = new ReportService(reportRepository);
-    }
+    @Autowired
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void ShouldAddReport(){
-        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento").build();
-        Report report = Report.builder().depoiment("depoimento").build();
+    void ShouldAddReport() throws Exception {
+        MvcResult mvcResult = createReport();
+        Report report = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Report.class);
 
-        Mockito.doReturn(report).when(reportRepository).save(any(Report.class));
-
-        var result = reportService.save(newReportDTO);
-        assertThat(result).isNotNull();
-        assertThat(result.getDepoiment()).isEqualTo(newReportDTO.getDepoiment());
-
-    }
-    @Test
-    void ShouldFindReportById(){
-        ReportDTO reportDTO = ReportDTO.builder().id(1L).depoiment("depoimento").build();
-        Report report = Report.builder().id(1L).depoiment("depoimento").build();
-
-        Mockito.when(reportRepository.findById(reportDTO.getId())).thenReturn(Optional.of(report));
-
-        var result=reportService.findById(report.getId());
-        assertThat(result).isEqualTo(reportDTO);
-
-    }
-    @Test
-    void ShouldUpdateReport(){
-        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento2").build();
-        Report report = Report.builder().id(1L).depoiment("depoimento").build();
-
-        Mockito.when(reportRepository.findById(1L)).thenReturn(Optional.of(report));
-
-        var result = reportService.update(1L, newReportDTO);
-
-        assertThat(result).isNotNull().isEqualTo(new ReportDTO(report));
-        assertThat(result.getId()).isEqualTo(1L);
-    }
-    @Test
-    void shouldUpdateReportReturnsExceptionIfNotFound(){
-        NewReportDTO newReportDTO = NewReportDTO.builder().depoiment("depoimento2").build();
-        Report report = Report.builder().id(1L).depoiment("depoimento").build();
-
-        Mockito.when(reportRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> reportService.update(report.getId(), newReportDTO)).isInstanceOf(IllegalStateException.class);
-    }
-    @Test
-    void shouldDeleteById() {
-        Report report = Report.builder()
-                .id(1L)
-                .depoiment("teste")
+        ReportDTO reportDTO = ReportDTO.builder()
+                .id(report.getId())
+                .depoiment("depoimento teste")
+                .description("descricao teste")
+                .title("titulo teste")
                 .build();
 
-        Mockito.when(reportRepository.findById(report.getId())).thenReturn(Optional.of(report));
-
-        var result = reportService.deleteById(report.getId());
-
-        assertThat(result).isEqualTo("Report was successfully deleted");
+        mockMvc.perform(
+                        post("/reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(reportDTO)))
+                .andExpect(status().isCreated())
+                .andReturn();
     }
-    @Test
-    void shouldDeleteByIdReturnsThrowsException() {
+
+
+    private MvcResult createReport() throws Exception {
         Report report = Report.builder()
-                .id(1L)
-                .depoiment("teste")
+                .depoiment("depoimento teste")
+                .description("descricao teste")
+                .title("titulo teste")
                 .build();
 
-        Mockito.when(reportRepository.findById(any())).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> reportService.deleteById(report.getId())).isInstanceOf(IllegalStateException.class);
+        return mockMvc.perform(
+                        post("/reports")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(report)))
+                .andReturn();
     }
+
 }
 
