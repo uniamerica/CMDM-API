@@ -21,6 +21,7 @@ public class User {
     private Long id;
     @ApiModelProperty(value = "Nome do usuario")
     private String name;
+    @Column(unique=true)
     private String username;
     @JsonIgnore
     private String password;

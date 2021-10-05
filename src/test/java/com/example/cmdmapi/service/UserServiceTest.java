@@ -2,6 +2,8 @@ package com.example.cmdmapi.service;
 
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
+import com.example.cmdmapi.exceptions.NotFoundException;
+import com.example.cmdmapi.model.Role;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
 import com.example.cmdmapi.repository.UserRepository;
@@ -110,7 +112,7 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.update(user.getId(), newUserDTO)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> userService.update(user.getId(), newUserDTO)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -137,6 +139,6 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.deleteById(user.getId())).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> userService.deleteById(user.getId())).isInstanceOf(NotFoundException.class);
     }
 }
