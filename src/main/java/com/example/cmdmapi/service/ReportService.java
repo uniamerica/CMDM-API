@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +47,8 @@ public class ReportService{
         report.setTitle(newReportDTO.getTitle());
         report.setDescription(newReportDTO.getDescription());
         report.setDepoiment(newReportDTO.getDepoiment());
+        report.setPhoto(newReportDTO.getPhoto());
+        report.setVideo(newReportDTO.getVideo());
         User user = userRepository.findById(newReportDTO.getUserId()).orElseThrow(() -> new IllegalStateException("Not Found User by ID:" + newReportDTO.getUserId()));
         report.setUser(user);
 
