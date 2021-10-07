@@ -118,15 +118,11 @@ class ReportIntegrationTest {
     void shouldUpdateReport() throws Exception {
         shouldAddReport();
 
-        MvcResult mvcResult = createUser();
-
-        User user = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), User.class);
-
         NewReportDTO newReportDTO = NewReportDTO.builder()
                 .title("Update Test")
                 .description("test")
                 .depoiment("test")
-                .userId(user.getId())
+                .userId(1L)
                 .build();
 
         String content = objectMapper.writeValueAsString(newReportDTO);
