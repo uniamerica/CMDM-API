@@ -3,6 +3,7 @@ package com.example.cmdmapi.service;
 import com.example.cmdmapi.dto.UserDTO;
 import com.example.cmdmapi.dto.input.NewUserDTO;
 import com.example.cmdmapi.exceptions.NotFoundException;
+import com.example.cmdmapi.exceptions.UniqueException;
 import com.example.cmdmapi.model.Role;
 import com.example.cmdmapi.model.User;
 import com.example.cmdmapi.repository.RoleRepository;
@@ -13,8 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -140,5 +145,83 @@ class UserServiceTest {
         Mockito.when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.deleteById(user.getId())).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void shouldReturnAllUsers() {
+        User user = User.builder()
+                .id(1L)
+                .name("teste")
+                .build();
+        Mockito.when(userRepository.findAll()).thenReturn(List.of(user));
+
+        var result = userService.findAll();
+
+        List<UserDTO> users = new ArrayList<>();
+        users.add(new UserDTO(user));
+        assertThat(result).isEqualTo(users);
+    }
+
+    @Test
+    void shouldLoadUserByUsername(){
+        Collection<Role> roles = new ArrayList<>();
+        User user = User.builder()
+                .id(1L)
+                .name("teste")
+                .username("teste")
+                .password("teste")
+                .roles(roles)
+                .build();
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+
+        var result = userService.loadUserByUsername(user.getUsername());
+
+        assertThat(result).isEqualTo(new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities));
+    }
+
+    @Test
+    void shouldAddRoleToUser(){
+
+        Collection<Role> roles = new ArrayList<>();
+
+        Role role = Role.builder()
+                .id(1L)
+                .name("admin")
+                .build();
+
+        roles.add(role);
+
+        User user = User.builder()
+                .id(1L)
+                .name("teste")
+                .username("teste")
+                .password("teste")
+                .roles(roles)
+                .build();
+
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+         userService.addRoleToUser(user.getId(), role.getName());
+
+         assertThat(user.getRoles().iterator().next()).isEqualTo(role);
+
+    }
+
+    @Test
+    void shouldReturnUniqueExceptionIfUserNotUnique() {
+        User user = User.builder()
+                .id(1L)
+                .name("teste")
+                .username("teste")
+                .password("teste")
+                .build();
+
+        Mockito.when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> userService.ifUsernameExistsReturnException("teste")).isInstanceOf(UniqueException.class);
+        assertThatThrownBy(() -> userService.ifUsernameExistsReturnException("teste", 2L)).isInstanceOf(UniqueException.class);
     }
 }

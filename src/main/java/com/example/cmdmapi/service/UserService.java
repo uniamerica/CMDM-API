@@ -58,7 +58,8 @@ public class UserService implements UserDetailsService {
     }
 
     public String deleteById(long id) {
-        userRepository.deleteById(id);
+        User user = findUserByIdOrReturnException(id);
+        userRepository.deleteById(user.getId());
         return "Deletado com Sucesso";
     }
 
