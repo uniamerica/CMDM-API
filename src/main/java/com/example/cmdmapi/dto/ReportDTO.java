@@ -19,6 +19,8 @@ public class ReportDTO implements Serializable {
     private String description;
     private String depoiment;
     private User user;
+    private String photo;
+    private String video;
 
     public ReportDTO(Report report) {
         id = report.getId();
@@ -26,5 +28,7 @@ public class ReportDTO implements Serializable {
         description = report.getDescription();
         depoiment = report.getDepoiment();
         user = report.getUser();
+        photo = report.getPhoto();
+        video = report.getVideo();
     }
 }

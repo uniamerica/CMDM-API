@@ -18,6 +18,9 @@ public class Report{
     private String title;
     private String description;
     private String depoiment;
+    private String photo;
+    private  String video;
+
 
 //    @Column(nullable = false)
 //    private boolean pendente;

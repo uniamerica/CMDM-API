@@ -25,6 +25,11 @@ public class NewReportDTO {
     private String depoiment;
     @NotNull(message = "User id is required")
     private Long userId;
+    @NotBlank (photo = "Photo is Required")
+    private String photo;
+    @NotBlank (video = "Video is Required")
+    private String video;
+
 
     public Report toModel(){
         Report report = new Report();
@@ -32,7 +37,11 @@ public class NewReportDTO {
         report.setDescription(getDescription());
         report.setDepoiment(getDepoiment());
         report.setUser(new User(userId));
+        report.setPhoto(getPhoto());
+        report.setVideo(getVideo());
 
         return report;
     }
+
+
 }
