@@ -25,9 +25,9 @@ public class NewReportDTO {
     private String depoiment;
     @NotNull(message = "User id is required")
     private Long userId;
-    @NotBlank (photo = "Photo is Required")
+//    @NotBlank (photo = "Photo is Required")
     private String photo;
-    @NotBlank (video = "Video is Required")
+//    @NotBlank (video = "Video is Required")
     private String video;
 
 
