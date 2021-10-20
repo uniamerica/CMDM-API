@@ -1,5 +1,6 @@
 package com.example.cmdmapi.dto;
 
+import com.example.cmdmapi.model.Role;
 import com.example.cmdmapi.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Builder
 @Data
@@ -22,6 +24,7 @@ public class UserDTO implements Serializable {
     private String phone;
     private String email;
     private String address;
+    private Collection<Role> roles;
 
     public UserDTO(User user){
         id = user.getId();
@@ -31,6 +34,7 @@ public class UserDTO implements Serializable {
         phone = user.getPhone();
         email = user.getEmail();
         address = user.getAddress();
+        roles = user.getRoles();
     }
 }
 
