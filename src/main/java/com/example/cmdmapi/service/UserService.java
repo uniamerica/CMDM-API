@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
 
     public void addRoleToUser(Long userId, String roleName){
         User user = findUserByIdOrReturnException(userId);
-        Role role = roleRepository.findByName(roleName);
+        Role role = roleRepository.findByName(roleName).orElseThrow(() -> new NotFoundException("Not Found Role by Name:" + roleName));
 
         if(!user.getRoles().contains(role)){
             user.getRoles().add(role);
