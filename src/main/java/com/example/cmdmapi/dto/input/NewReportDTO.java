@@ -23,7 +23,7 @@ public class NewReportDTO {
     private String description;
     @NotBlank(message = "Depoiment is Required")
     private String depoiment;
-    @NotNull(message = "User id is required")
+//    @NotNull(message = "User id is required")
     private Long userId;
 //    @NotBlank (photo = "Photo is Required")
     private String photo;

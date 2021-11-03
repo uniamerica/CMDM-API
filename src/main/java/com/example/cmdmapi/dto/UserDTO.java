@@ -21,7 +21,6 @@ public class UserDTO implements Serializable {
     private LocalDate birth;
     private String phone;
     private String email;
-    private String address;
 
     public UserDTO(User user){
         id = user.getId();
@@ -30,7 +29,6 @@ public class UserDTO implements Serializable {
         birth = user.getBirth();
         phone = user.getPhone();
         email = user.getEmail();
-        address = user.getAddress();
     }
 }
 

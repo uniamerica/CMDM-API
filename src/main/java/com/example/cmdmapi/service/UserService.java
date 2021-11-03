@@ -49,7 +49,6 @@ public class UserService implements UserDetailsService {
         User user = findUserByIdOrReturnException(id);
         ifUsernameExistsReturnException(newUserDTO.getUsername(), id);
         user.setName(newUserDTO.getName());
-        user.setAddress(newUserDTO.getAddress());
         user.setUsername(newUserDTO.getUsername());
         user.setPhone(newUserDTO.getPhone());
         user.setEmail(newUserDTO.getEmail());

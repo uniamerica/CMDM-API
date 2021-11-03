@@ -22,7 +22,6 @@ public class NewUserDTO {
     private String phone;
     @NotBlank(message = "email is Required.")
     private String email;
-    private String address;
 
     public User toModel(){
         User user = new User();
@@ -32,7 +31,6 @@ public class NewUserDTO {
         user.setBirth(getBirth());
         user.setPhone(getPhone());
         user.setEmail(getEmail());
-        user.setAddress(getAddress());
         return user;
     }
 }

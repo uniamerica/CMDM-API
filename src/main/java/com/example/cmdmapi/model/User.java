@@ -28,7 +28,6 @@ public class User {
     private LocalDate birth;
     private String phone;
     private String email;
-    private String address;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
